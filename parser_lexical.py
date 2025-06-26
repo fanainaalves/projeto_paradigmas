@@ -70,18 +70,17 @@ def p_elemento(p):
     # Quando fecha um PubmedArticle, salva e reinicia
     if tag_name == 'pubmedarticle':
         artigos.append({
-            'titulo': artigo['titulo'],
-            'abstract': artigo['abstract'],
-            'ano': artigo['ano'],
-            'autores': '; '.join(artigo['autores']),
+            'titulo': artigo.get('titulo', '').strip(),
+            'abstract': artigo.get('abstract', '').strip(),
+            'ano': artigo.get('ano', '').strip(),
+            'autores': '; '.join(artigo.get('autores', [])),
         })
         artigo = {'titulo': '', 'abstract': '', 'ano': '', 'autores': []}
         autor_temp = {'ForeName': '', 'LastName': ''}
 
+
 def p_error(p):
     if p:
-        print(f"Erro de sintaxe: {p}")
-    else:
-        print("Erro de sintaxe no fim do arquivo")
+        print(f"[Aviso] Erro de sintaxe em token: {p.type} (valor: {p.value})")
 
 parser = yacc.yacc()

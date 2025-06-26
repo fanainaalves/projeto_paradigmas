@@ -2,24 +2,40 @@ from lexer import lexer
 from parser_lexical import parser, artigos
 import gzip
 import csv
+import re
 
 def parse_pubmed(file_path, output_path="resultado.csv"):
-    # Ler o conteúdo do arquivo (GZ ou XML puro)
-    if file_path.endswith('.gz'):
-        with gzip.open(file_path, 'rt', encoding='utf-8') as f:
-            xml_content = f.read()
-    else:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            xml_content = f.read()
-
-    # Reiniciar os dados
     artigos.clear()
+    inside_article = False
+    buffer = []
 
-    # Analisar com lexer + parser
-    lexer.input(xml_content)
-    parser.parse(xml_content, lexer=lexer)
+    if file_path.endswith('.gz'):
+        f = gzip.open(file_path, 'rt', encoding='utf-8')
+    else:
+        f = open(file_path, 'r', encoding='utf-8')
 
-    # Escrever resultado em CSV
+    for line in f:
+        if "<PubmedArticle>" in line:
+            inside_article = True
+            buffer = [line]
+        elif "</PubmedArticle>" in line:
+            buffer.append(line)
+            article_str = ''.join(buffer)
+
+            try:
+                lexer.input(article_str)
+                parser.parse(article_str, lexer=lexer)
+            except Exception:
+                continue  # ignora artigos problemáticos
+
+            inside_article = False
+            buffer = []
+        elif inside_article:
+            buffer.append(line)
+
+    f.close()
+
+    # Exportar para CSV
     with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
         fieldnames = ['titulo', 'autores', 'abstract', 'ano']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -28,5 +44,4 @@ def parse_pubmed(file_path, output_path="resultado.csv"):
         for artigo in artigos:
             writer.writerow(artigo)
 
-    print(f"Arquivo CSV salvo em: {output_path}")
-    return artigos
+    print(f"[✓] Processamento concluído. {len(artigos)} artigos salvos em {output_path}")

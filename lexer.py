@@ -12,13 +12,13 @@ t_ignore = ' \t\n'
 
 # Tag de abertura: <Tag>
 def t_LTAG(t):
-    r'<[a-zA-Z0-9]+>'
+    r'<[a-zA-Z0-9]+(\s+[^<>]+)?>'
     return t
 
-# Tag de fechamento: </Tag>
 def t_RTAG(t):
     r'</[a-zA-Z0-9]+>'
     return t
+
 
 # Texto entre tags
 def t_TEXT(t):
