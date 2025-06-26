@@ -1,0 +1,124 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> document
+Rule 1     document -> elementos
+Rule 2     elementos -> elemento elementos
+Rule 3     elementos -> elemento
+Rule 4     elemento -> LTAG TEXT RTAG
+Rule 5     elemento -> LTAG elementos RTAG
+
+Terminals, with rules where they appear
+
+LTAG                 : 4 5
+RTAG                 : 4 5
+TEXT                 : 4
+error                : 
+
+Nonterminals, with rules where they appear
+
+document             : 0
+elemento             : 2 3
+elementos            : 1 2 5
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . document
+    (1) document -> . elementos
+    (2) elementos -> . elemento elementos
+    (3) elementos -> . elemento
+    (4) elemento -> . LTAG TEXT RTAG
+    (5) elemento -> . LTAG elementos RTAG
+
+    LTAG            shift and go to state 4
+
+    document                       shift and go to state 1
+    elementos                      shift and go to state 2
+    elemento                       shift and go to state 3
+
+state 1
+
+    (0) S' -> document .
+
+
+
+state 2
+
+    (1) document -> elementos .
+
+    $end            reduce using rule 1 (document -> elementos .)
+
+
+state 3
+
+    (2) elementos -> elemento . elementos
+    (3) elementos -> elemento .
+    (2) elementos -> . elemento elementos
+    (3) elementos -> . elemento
+    (4) elemento -> . LTAG TEXT RTAG
+    (5) elemento -> . LTAG elementos RTAG
+
+    $end            reduce using rule 3 (elementos -> elemento .)
+    RTAG            reduce using rule 3 (elementos -> elemento .)
+    LTAG            shift and go to state 4
+
+    elemento                       shift and go to state 3
+    elementos                      shift and go to state 5
+
+state 4
+
+    (4) elemento -> LTAG . TEXT RTAG
+    (5) elemento -> LTAG . elementos RTAG
+    (2) elementos -> . elemento elementos
+    (3) elementos -> . elemento
+    (4) elemento -> . LTAG TEXT RTAG
+    (5) elemento -> . LTAG elementos RTAG
+
+    TEXT            shift and go to state 6
+    LTAG            shift and go to state 4
+
+    elementos                      shift and go to state 7
+    elemento                       shift and go to state 3
+
+state 5
+
+    (2) elementos -> elemento elementos .
+
+    $end            reduce using rule 2 (elementos -> elemento elementos .)
+    RTAG            reduce using rule 2 (elementos -> elemento elementos .)
+
+
+state 6
+
+    (4) elemento -> LTAG TEXT . RTAG
+
+    RTAG            shift and go to state 8
+
+
+state 7
+
+    (5) elemento -> LTAG elementos . RTAG
+
+    RTAG            shift and go to state 9
+
+
+state 8
+
+    (4) elemento -> LTAG TEXT RTAG .
+
+    LTAG            reduce using rule 4 (elemento -> LTAG TEXT RTAG .)
+    $end            reduce using rule 4 (elemento -> LTAG TEXT RTAG .)
+    RTAG            reduce using rule 4 (elemento -> LTAG TEXT RTAG .)
+
+
+state 9
+
+    (5) elemento -> LTAG elementos RTAG .
+
+    LTAG            reduce using rule 5 (elemento -> LTAG elementos RTAG .)
+    $end            reduce using rule 5 (elemento -> LTAG elementos RTAG .)
+    RTAG            reduce using rule 5 (elemento -> LTAG elementos RTAG .)
+
