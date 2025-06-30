@@ -38,10 +38,10 @@ def parse_pubmed(file_path, output_path="resultado.csv"):
     # Exportar para CSV
     with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
         fieldnames = ['titulo', 'autores', 'abstract', 'ano']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')  # <- aqui!
         writer.writeheader()
-
         for artigo in artigos:
             writer.writerow(artigo)
+
 
     print(f"[✓] Processamento concluído. {len(artigos)} artigos salvos em {output_path}")
