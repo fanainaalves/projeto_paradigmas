@@ -30,8 +30,8 @@ def p_elemento(p):
                 | LTAG elementos RTAG'''
     global current_tag, artigo, autor_temp
 
-    tag_name = p[1].strip('<>').lower()
-    closing_tag = p[len(p) - 1].strip('</>').lower()
+    tag_name = p[1].strip('<>').split()[0].lower()
+    closing_tag = p[len(p) - 1].strip('</>').split()[0].lower()
 
     if tag_name != closing_tag:
         return  # ignora inconsistência
@@ -44,10 +44,7 @@ def p_elemento(p):
             artigo['titulo'] = content
 
         elif tag_name == 'abstracttext':
-            if artigo['abstract']:
-                artigo['abstract'] += ' ' + content
-            else:
-                artigo['abstract'] = content
+            artigo['abstract'] += (' ' if artigo['abstract'] else '') + content
 
         elif tag_name == 'year' and not artigo['ano']:
             artigo['ano'] = content
@@ -58,7 +55,7 @@ def p_elemento(p):
         elif tag_name == 'lastname':
             autor_temp['LastName'] = content
 
-    # Quando fecha Author, monta nome completo
+    # Quando fecha um Author, monta nome
     if tag_name == 'author':
         nome = autor_temp.get('ForeName', '')
         sobrenome = autor_temp.get('LastName', '')
@@ -67,7 +64,7 @@ def p_elemento(p):
             artigo['autores'].append(completo)
         autor_temp = {'ForeName': '', 'LastName': ''}
 
-    # Quando fecha um PubmedArticle, salva e reinicia
+    # Quando fecha um PubmedArticle, salva o artigo
     if tag_name == 'pubmedarticle':
         artigos.append({
             'titulo': artigo.get('titulo', '').strip(),
